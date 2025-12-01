@@ -1,24 +1,63 @@
 import {
   SlashCommandBuilder,
   type ChatInputCommandInteraction,
+  EmbedBuilder,
 } from "discord.js";
 import { getMinecraftServerDataService } from "../services/minecraft-server";
 
 const OVERRIDE_MINECRAFT_VERSION = process.env.MINECRAFT_VERSION;
 
-const handleInteraction = async (
-  interaction: ChatInputCommandInteraction
-) => {
+const handleInteraction = async (interaction: ChatInputCommandInteraction) => {
   try {
+
+    const start = Date.now();
     const serverData = await getMinecraftServerDataService();
+    const ping = Date.now() - start;
 
-    const response = `
-    Cliente: ${OVERRIDE_MINECRAFT_VERSION ?? serverData?.version?.name_raw}
-    IP: ${serverData?.host}:${serverData?.port}
-    Jugadores: ${serverData?.players.online}/${serverData?.players.max}
-    `;
+    const statusEmoji = serverData?.online ? "🟢 Online" : "🔴 Offline";
+    const motd = serverData?.motd?.clean ?? "Sin MOTD";
 
-    await interaction.reply(response);
+    const embed = new EmbedBuilder()
+      .setTitle("🌐 Estado del Servidor Minecraft")
+      .setColor(0x00aaff)
+      .addFields(
+        {
+          name: "Estado",
+          value: statusEmoji,
+          inline: true,
+        },
+        {
+          name: "Ping del servidor",
+          value: `${ping} ms`,
+          inline: true,
+        },
+        {
+          name: "Cliente",
+          value: `${
+            OVERRIDE_MINECRAFT_VERSION ?? serverData?.version?.name_raw
+          }`,
+          inline: false,
+        },
+        {
+          name: "MOTD",
+          value: motd,
+          inline: false,
+        },
+        {
+          name: "IP",
+          value: `${serverData?.host}:${serverData?.port}`,
+          inline: true,
+        },
+        {
+          name: "Jugadores",
+          value: `${serverData?.players.online}/${serverData?.players.max}`,
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter({ text: "Actualizado" });
+
+    return interaction.reply({ embeds: [embed] });
   } catch (error) {
     console.log(error);
     await interaction.reply("Error al obtener la informacion del servidor");
