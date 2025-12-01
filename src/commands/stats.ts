@@ -57,7 +57,7 @@ const getAllPlayerStats = () => {
 
 const formatTable = (players: any[]) => {
   let table = "```\n# | Jugador        | Horas | Kills | Muertes\n";
-  table += "--+---------------+-------+-------+--------\n";
+  table += "--+----------------+-------+-------+--------\n";
 
   players.forEach((p, i) => {
     table += `${String(i + 1).padEnd(2)}| ${p.name.padEnd(15)}| ${p.hours
