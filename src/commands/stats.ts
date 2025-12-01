@@ -39,7 +39,7 @@ const getAllPlayerStats = () => {
       custom["minecraft:play_time"] ??
       0;
 
-    const deaths = custom["minecraft:death_count"] ?? 0;
+    const deaths = custom["minecraft:deaths"] ?? 0;
     const pvpKills = killed["minecraft:player"] ?? 0;
 
     const hours = playtimeTicks > 0 ? playtimeTicks / 20 / 3600 : 0;
