@@ -5,25 +5,21 @@ import {
 import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
 
-// Rutas reales
 const WORLD_STATS = "/root/minecraft-server/world/stats";
 const USERNAMECACHE = "/root/minecraft-server/usernamecache.json";
 
-// Cargar nombres desde usernamecache.json
 const loadUsernameCache = () => {
   const raw = readFileSync(USERNAMECACHE, "utf8");
   const json = JSON.parse(raw);
 
   const map = new Map<string, string>();
 
-  // json es un objeto { uuid: name }
   for (const uuid of Object.keys(json)) {
     map.set(uuid, json[uuid]);
   }
   return map;
 };
 
-// Leer estadísticas de cada jugador
 const getAllPlayerStats = () => {
   const usernameCache = loadUsernameCache();
   const files = readdirSync(WORLD_STATS).filter((f) => f.endsWith(".json"));
@@ -36,14 +32,18 @@ const getAllPlayerStats = () => {
     const custom = json["minecraft:custom"] ?? {};
     const killed = json["minecraft:killed"] ?? {};
 
-    const playtimeTicks = custom["minecraft:play_time"] ?? 0;
+    const playtimeTicks =
+      custom["minecraft:total_world_time"] ??
+      custom["minecraft:play_time"] ??
+      0;
     const deaths = custom["minecraft:death_count"] ?? 0;
     const pvpKills = killed["minecraft:player"] ?? 0;
+    const hours = playtimeTicks / 20 / 3600;
 
     return {
+      hours,
       uuid,
       name: usernameCache.get(uuid) ?? uuid.substring(0, 8),
-      hours: playtimeTicks / 20 / 3600,
       deaths,
       pvpKills,
     };
@@ -52,7 +52,6 @@ const getAllPlayerStats = () => {
   return players;
 };
 
-// Formatear tabla para Discord
 const formatTable = (players: any[]) => {
   let table = "```\n# | Jugador        | Horas | Kills | Muertes\n";
   table += "--+---------------+-------+-------+--------\n";
