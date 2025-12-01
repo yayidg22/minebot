@@ -9,26 +9,18 @@ const OVERRIDE_MINECRAFT_VERSION = process.env.MINECRAFT_VERSION;
 
 const handleInteraction = async (interaction: ChatInputCommandInteraction) => {
   try {
-
-    const start = Date.now();
     const serverData = await getMinecraftServerDataService();
-    const ping = Date.now() - start;
 
     const statusEmoji = serverData?.online ? "🟢 Online" : "🔴 Offline";
     const motd = serverData?.motd?.clean ?? "Sin MOTD";
 
     const embed = new EmbedBuilder()
-      .setTitle("🌐 Estado del Servidor Minecraft")
+      .setTitle("Estado del Servidor Minecraft")
       .setColor(0x00aaff)
       .addFields(
         {
           name: "Estado",
           value: statusEmoji,
-          inline: true,
-        },
-        {
-          name: "Ping del servidor",
-          value: `${ping} ms`,
           inline: true,
         },
         {
