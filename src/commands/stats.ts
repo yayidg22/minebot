@@ -29,8 +29,11 @@ const getAllPlayerStats = () => {
     const raw = readFileSync(join(WORLD_STATS, file), "utf8");
     const json = JSON.parse(raw);
 
-    const custom = json["minecraft:custom"] ?? {};
-    const killed = json["minecraft:killed"] ?? {};
+    const stats = json.stats ?? json; 
+
+
+    const custom = stats["minecraft:custom"] ?? {};
+    const killed = stats["minecraft:killed"] ?? {};
     const playtimeTicks =
       custom["minecraft:total_world_time"] ??
       custom["minecraft:play_time"] ??
