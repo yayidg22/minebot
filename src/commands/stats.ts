@@ -73,7 +73,7 @@ const handleInteraction = async (interaction: ChatInputCommandInteraction) => {
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("stats")
+    .setName("minestats")
     .setDescription("Muestra las estadisticas de los jugadores"),
   async execute(interaction: ChatInputCommandInteraction) {
     await handleInteraction(interaction);
